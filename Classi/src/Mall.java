@@ -16,7 +16,7 @@ public class Mall {
     private final int  mallmaxcap = 10000;
     private int mallcurrcap;
 
-    //cstruttore
+    //costruttore
     public Mall(ArrayList<Coordinates> position,ArrayList<Shop> shops, Myqueue mallqueue, ArrayList<User> people, int mallcurrcap){
         this.position = position;
         this.shops = shops;

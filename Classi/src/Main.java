@@ -8,6 +8,7 @@ public class Main {
         data = data.replace(":","");
         data = data.replace("-","");
         data = data.replace(" ","");
+        data = data.replace(".","");
 
         return data;
     }
@@ -17,7 +18,7 @@ public class Main {
 
         Date date = new Date();
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String ciaone = formatter.format(date);
 
 

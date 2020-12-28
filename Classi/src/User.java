@@ -1,35 +1,48 @@
+//classe utente
 public class User {
 
+    //campi
+    //position è la posizione dell'utente
+    //code è il suo codice
     private Coordinates position;
     private Code code;
 
 
-    public User(Code code, Coordinates position){
-        this.code = code;
+    //costruttore
+    public User(Coordinates position){
+        this.code = new Code();
         this.position = position;
+
     }
 
-    public void mallenter(Mall x) throws InterruptedException {
-        x.mallenqueue(this);
+    //metodo che inserisce l'utente nel centro commerciale richiamando il metodo di Mall
+    public void mallenter(Mall mall) throws InterruptedException {
+        mall.mallenqueue(this);
     }
 
-    public void mallexit(Mall x){
-        x.malldequeue(this);
-    }
-    public void shopenter(Shop x) throws InterruptedException {
-        x.shopenqueue(this);
+    //metodo che rimuove l'utente nel centro commerciale richiamando il metodo di Mall
+    public void mallexit(Mall mall){
+        mall.malldequeue(this);
     }
 
-    public void shopexit(Shop x){
-        x.shopdequeue(this);
+    //metodo che inserisce l'utente nel negozio richiamando il metodo di Shop
+    public void shopenter(Shop shop) throws InterruptedException {
+        shop.shopenqueue(this);
+    }
+
+    //metodo che inserisce l'utente nel negozio richiamando il metodo di Shop
+    public void shopexit(Shop shop){
+        shop.shopdequeue(this);
     }
 
 
+    //metodo per creare una segnalazione passandogli il relativo testo e le coordinate attuali nell'utente
     public Signal signalization (Coordinates cord, String text){
         Signal sign = new Signal(cord, text);
         return sign;
     }
 
+    //getter
     public Coordinates getPosition() {
         return position;
     }

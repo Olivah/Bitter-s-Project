@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Bitter</string>
+    <string name="title_activity_tabs">TabsActivity</string>
+    <string name="google_maps_api_key">AIzaSyCObufPLb__OY3EfXDI349id_e7tYQSQWU</string>
+    <string name="signIn">Accedi</string>
+    <string name="exit">Esci</string>
+    <string name="signalText">Descrivi il problema</string>
+    <string name="placeholder">Inserisci qua la descrizione</string>
+    <string name="send">Invia</string>
+    <string name="queue">Sei il numero</string>
+    <string name="tot_people">di ? persone in coda</string>
+    <string name="userCode">USER_CODE: ?</string>
+</resources>

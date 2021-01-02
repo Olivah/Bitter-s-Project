@@ -4,7 +4,7 @@ Utilizza coordinate nel database per settare marker sulla nave de vero e bound s
 Inserisce i seguenti dati nel database:\
 -Segnalazioni\
 -Utenti acceduti all'app\
--Capacità corrente del centro commerciale\ 
+-Capacità corrente del centro commerciale\
 -Utenti acceduti al centro commerciale
 
 L'activity che contiene le tabs dei negozi cambia dinamicamente in base alla lista di nomi del centro commerciale nel database real time. \

@@ -1,13 +1,14 @@
 # Bitter-s-Project
-Versione con parziale utilizzo del database, inserisce gli utenti che aprono l'applicazione, \
-utilizza coordinate nel database per settare marker sulla nave de vero e bound sulla mappa \
-intorno all'italia come swipe singolo ai bordi dello schermo\
-inserisce segnalazioni inserite dall'utente nel database, gli utenti che accedono al centro commerciale,\
-cambia la capacità corrente del centro commerciale e inserisce l'utente entrato nella lista di persone al suo interno\
-l'attività che contiene le tabs dei negozi cambia dinamicamente in base alla lista di nomi dei centri commerciali\
-all'interno del real time database\
-controlla in entrambe le mappe la presenza dei sensori richiesti\
-quali internet, GPS e bluetooth, altrimenti killa con un bruteforce l'applicazione
+Versione con parziale utilizzo del database, inserisce gli utenti che aprono l'applicazione. \
+Utilizza coordinate nel database per settare marker sulla nave de vero e bound sulla mappa intorno all'italia come swipe singolo ai bordi dello schermo. \
+Inserisce i seguenti dati nel database:\ 
+-Segnalazioni \
+-Utenti acceduti all'app \
+-Capacità corrente del centro commerciale \ 
+-L'utenti acceduti al centro commerciale \
+\
+L'activity che contiene le tabs dei negozi cambia dinamicamente in base alla lista di nomi del centro commerciale nel database real time. \
+Controlla in entrambe le mappe la presenza dei sensori richiesti, quali internet, GPS e bluetooth, altrimenti killa con un bruteforce l'applicazione
  
 # MANCA:
 -Gestione della coda online\

@@ -7,9 +7,9 @@ cambia la capacità corrente del centro commerciale e inserisce l'utente entrato
 l'attività che contiene le tabs dei negozi cambia dinamicamente in base alla lista di nomi dei centri commerciali\
 all'interno del real time database\
 controlla in entrambe le mappe la presenza dei sensori richiesti\
-quali internet, GPS e bluetooth, altrimenti killa con un bruteforce l'applicazione\
+quali internet, GPS e bluetooth, altrimenti killa con un bruteforce l'applicazione
  
 # MANCA:
 -Gestione della coda online\
 -Marker segnalazioni OPPURE sezione nella tab activity (molto più probabile/semplice)\
--Gestione bluetooth per vicinanza\
+-Gestione bluetooth per vicinanza

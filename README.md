@@ -12,4 +12,5 @@ Controlla in entrambe le mappe la presenza dei sensori richiesti, quali internet
  
 # MANCA:
 -Gestione della coda online\
--Gestione bluetooth per vicinanza
+-Gestione bluetooth per vicinanza -> PROVIAMO CON NEARBY, SE NON FUNGE SI PUO' DELEGARE IL COMPITO AD UN THREAD CHE OGNI TOT SECONDI CONTROLLA\n 
+SE CI SONO DISPOSITIVI NEI PARAGGI E SE NE TROVA PIU' DI UNO TE LO SEGNALA CON UN DIALOG BUILDER

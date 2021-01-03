@@ -12,5 +12,4 @@ Controlla in entrambe le mappe la presenza dei sensori richiesti, quali internet
  
 # MANCA:
 -Gestione della coda online\
--Marker segnalazioni OPPURE sezione nella tab activity (molto più probabile/semplice)\
 -Gestione bluetooth per vicinanza

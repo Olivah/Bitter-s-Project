@@ -13,3 +13,4 @@ Controlla in entrambe le mappe la presenza dei sensori richiesti, quali internet
 # MANCA:
 -Gestione della coda online\
 -Gestione bluetooth per vicinanza
+-Olova dio supremo

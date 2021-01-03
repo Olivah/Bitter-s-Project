@@ -40,6 +40,7 @@ public class TabsActivity extends AppCompatActivity{
     private TabLayout tabLayout;            // Layout delle tabs
     private MapFragment mapFragment;        // Fragment che genera la mappa
     private ShopFragment shopFragment;      // Fragment che genera i negozi
+    private SignalFragment signalFragment;  // Fragment che genera le segnalazioni
 
     private int capacity;
 
@@ -59,7 +60,7 @@ public class TabsActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
 
-        Query currcap= MainActivity.info.getInfo().child("Mall_List").child("Nave_de_Vero").child("Currcap");
+        Query currcap= MainActivity.info.getInfo("Mall_List/Nave_de_Vero/Currcap");
         currcap.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -81,6 +82,7 @@ public class TabsActivity extends AppCompatActivity{
 
         mapFragment=new MapFragment();
         shopFragment=new ShopFragment();
+        signalFragment=new SignalFragment();
 
         tabLayout.setupWithViewPager(viewPager);
 
@@ -88,6 +90,7 @@ public class TabsActivity extends AppCompatActivity{
         ViewPagerAdapter viewPagerAdapter=new ViewPagerAdapter(getSupportFragmentManager(), 0);
         viewPagerAdapter.addFragment(mapFragment, "MAPPA");
         viewPagerAdapter.addFragment(shopFragment, "NEGOZI");
+        viewPagerAdapter.addFragment(signalFragment, "SEGNALAZIONI");
         viewPager.setAdapter(viewPagerAdapter);
 
         showToast("Accesso eseguito");
@@ -113,7 +116,11 @@ public class TabsActivity extends AppCompatActivity{
         builder.setMessage("Sei sicuro di voler uscire? ");
         builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                finish();
+                if(!ShopFragment.isInside) {
+                    finish();
+                }else{
+                    showToast("Esci dal negozio prima!");
+                }
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -130,6 +137,7 @@ public class TabsActivity extends AppCompatActivity{
         capacity--;
         MainActivity.info.pushInfo("Mall_List/Nave_de_Vero", "Currcap", ""+capacity);
         MainActivity.info.removeInfo("Mall_List/Nave_de_Vero/Inside_User/List", MainActivity.info.getUser().getCode().toString());
+        showToast("Arrivederci, a presto!");
     }
 
     // Classe che si occupa dell'adattazione delle pagine

@@ -1,9 +1,11 @@
 package com.example.bitter;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -30,7 +32,7 @@ public class ShopFragment extends Fragment {
 
     private ListView listView;
     private FragmentActivity context;
-    private boolean isInside;
+    public static boolean isInside;
     private View disabledElement;
     private Button exitButton;
 
@@ -46,11 +48,13 @@ public class ShopFragment extends Fragment {
 
         listView= (ListView) v.findViewById(R.id.ListView);
 
+
+        // mi prendo la lista di negozi dal database
         final ArrayList<String> list= new ArrayList<>();
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
 
-        Query shops= MainActivity.info.getInfo().child("Mall_List").child("Nave_de_Vero").child("Shop_List_Name");
+        Query shops= MainActivity.info.getInfo("Mall_List/Nave_de_Vero/Shop_List_Name");
         shops.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -87,9 +91,23 @@ public class ShopFragment extends Fragment {
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                disabledElement.setEnabled(true);
-                isInside=false;
-                v.setVisibility(View.INVISIBLE);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                builder.setMessage("Sei sicuro di voler uscire? ");
+                builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                            disabledElement.setEnabled(true);
+                            isInside=false;
+                            exitButton.setVisibility(View.INVISIBLE);
+                            showToast("Sei uscito dal negozio");
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
             }
         });
 

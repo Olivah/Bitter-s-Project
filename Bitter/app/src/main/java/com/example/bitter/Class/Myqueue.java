@@ -1,67 +1,72 @@
 package com.example.bitter.Class;
 
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
+import static java.lang.Integer.parseInt;
+
 //Classe per gestire le code del centro commerciale e dei relativi negozi al suo interno
-public class Myqueue{
+public class Myqueue {
 
     //campo people lista di persone all'interno del centro commerciale/negozio
     private ArrayList<User> queue;
     private int maxcap;
     private int currcap;
+    private Information database;
 
     //costruttore
-    public Myqueue (int maxcap){
-        this.currcap=0;
-        this.maxcap=maxcap;
-        this.queue = new ArrayList<>(this.maxcap);
+    public Myqueue(Information info) {
+        database = info;
+
+        final Query current= database.getInfo("Mall_List/Nave_de_Vero/Currcap");
+        current.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    //currcap=parseInt(dataSnapshot.getValue().toString());
+                    currcap=parseInt(dataSnapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        final Query max= database.getInfo("Mall_List/Nave_de_Vero/Maxcap");
+        max.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    //currcap=parseInt(dataSnapshot.getValue().toString());
+                    maxcap=parseInt(dataSnapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     //mette un utente nella relativa coda
-    public synchronized void enqueue(User user){
-        queue.add(user);
+    public void enqueue() {
+        if(currcap<maxcap){
+
+        }
     }
 
     //elimina la prima persona dalla coda cioè quella in posizione 0 e la restituisce
-    public synchronized User dequeue(){
-        return queue.remove(0);
-    }
+    public void dequeue() {
 
-    //elimina l'utente passato attraverso i parametro dalla coda
-    public synchronized void dequeue(User user){
-        queue.remove(user);
-    }
-
-    //metodo add: aggiunge la prima persona della coda nella lista del negozio/centro commerciale
-    public synchronized void add(User user, ArrayList<User> people) throws InterruptedException {
-
-        //mette l'utente in coda
-        enqueue(user);
-
-        //attende che la capacità corrente sia minore di quella massima
-        while(currcap>=maxcap)
-            wait();
-
-        //toglie la prima persona dalla coda di attesa e la aggiunge al negozio aumntando il numero di persone di 1
-        people.add(dequeue());
-        currcap++;
-    }
-
-    //rimuove una persona dal negozio
-    public synchronized void remove(User user, ArrayList<User> people){
-
-        //rimuove l'utente uscito dalla struttura diminuendo il numero di persone all'interno di 1 e lo notifica alla coda
-        people.remove(user);
-        currcap--;
-        notify();
-    }
-
-    public int getMaxcap(){
-        return maxcap;
-    }
-
-    public int getCurrcap(){
-        return currcap;
     }
 }
 

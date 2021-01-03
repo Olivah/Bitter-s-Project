@@ -11,4 +11,6 @@
     <string name="exit">Esci</string>
     <string name="signIn">Accedi</string>
     <string name="shop_placeholder">Premi su un qualsiasi elemento per accedere</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

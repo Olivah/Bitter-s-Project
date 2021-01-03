@@ -46,8 +46,6 @@ import static java.lang.Double.parseDouble;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     // variabili locali utili all'activity
-    private static final int REQUEST_ENABLE_BT=0;
-    private static final int REQUEST_DISCOVER_BT=1;
     private final int PLAY_SERVICES_ERROR_CODE=9002;
     public final static int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 9003;
 
@@ -136,12 +134,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mall=new Coordinates();
 
         // mi prendo la latitudine da firebase
-        Query latQuery= info.getInfo();
+        Query latQuery= info.getInfo("Mall_List/Nave_de_Vero/Coordinates/Lat");
         latQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
-                    String temp=dataSnapshot.child("Mall_List").child("Nave_de_Vero").child("Coordinates").child("Lat").getValue().toString();
+                    String temp=dataSnapshot.getValue().toString();
                     double x=parseDouble(temp);
                     mall.setLat(x);
                 }
@@ -154,12 +152,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         // mi prendo la longitudine da firebase
-        Query lngQuery= info.getInfo();
+        Query lngQuery= info.getInfo("Mall_List/Nave_de_Vero/Coordinates/Lng");
         lngQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
-                    String temp=dataSnapshot.child("Mall_List").child("Nave_de_Vero").child("Coordinates").child("Lng").getValue().toString();
+                    String temp=dataSnapshot.getValue().toString();
                     double x=parseDouble(temp);
                     mall.setLng(x);
                 }

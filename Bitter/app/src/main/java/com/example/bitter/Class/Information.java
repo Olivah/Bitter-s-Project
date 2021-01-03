@@ -28,8 +28,8 @@ public class Information {
     }
 
     // funzione che prende informazioni all'interno del real time database
-    public DatabaseReference getInfo(){
-        return reference= FirebaseDatabase.getInstance("https://bitter-298116-default-rtdb.firebaseio.com/").getReference();
+    public DatabaseReference getInfo(String path){
+        return reference= FirebaseDatabase.getInstance("https://bitter-298116-default-rtdb.firebaseio.com/").getReference(path);
     }
 
     // funzione che rimuove informazioni all'interno del real time database

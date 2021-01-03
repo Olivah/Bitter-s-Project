@@ -30,7 +30,7 @@ public class QueueActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_queue);
 
-        Query currcap= MainActivity.info.getInfo().child("Mall_List").child("Nave_de_Vero").child("Currcap");
+        Query currcap= MainActivity.info.getInfo("Mall_List/Nave_de_Vero/Currcap");
         currcap.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

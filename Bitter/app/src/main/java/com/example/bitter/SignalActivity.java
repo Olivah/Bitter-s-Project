@@ -30,7 +30,7 @@ public class SignalActivity extends AppCompatActivity {
         this.date = new Date();
         this.formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         String input= ((EditText)findViewById(R.id.userInput)).getText().toString();
-        MainActivity.info.pushInfo("Mall_List/Nave_de_Vero/Signal",new Code().toString(),formatter.format(date)+" "+input);
+        MainActivity.info.pushInfo("Mall_List/Nave_de_Vero/Signal",new Code().toString(),"\n"+formatter.format(date)+"\n\n"+input+"\n");
         showToast("Inviato con successo\n Grazie del supporto");
         finish();
     }

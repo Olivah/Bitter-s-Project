@@ -44,6 +44,7 @@ public class SignalFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
+                    list.clear();
                     for(DataSnapshot snapshot: dataSnapshot.getChildren()) {
                         list.add(snapshot.getValue().toString());
                     }

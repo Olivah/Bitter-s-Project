@@ -1,8 +1,11 @@
 package com.example.bitter;
 
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.location.OnNmeaMessageListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -14,6 +17,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.nearby.Nearby;
+import com.google.android.gms.nearby.connection.ConnectionsClient;
+import com.google.android.gms.nearby.messages.Message;
+import com.google.android.gms.nearby.messages.MessageListener;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,15 +39,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.android.gms.nearby.Nearby.getMessagesClient;
 import static java.lang.Integer.parseInt;
 
 public class TabsActivity extends AppCompatActivity{
 
-    private ViewPager viewPager;            // Visualizzatore di pagine
-    private TabLayout tabLayout;            // Layout delle tabs
-    private MapFragment mapFragment;        // Fragment che genera la mappa
-    private ShopFragment shopFragment;      // Fragment che genera i negozi
-    private SignalFragment signalFragment;  // Fragment che genera le segnalazioni
+    private ViewPager viewPager;              // Visualizzatore di pagine
+    private TabLayout tabLayout;              // Layout delle tabs
+    private MapFragment mapFragment;          // Fragment che genera la mappa
+    private ShopFragment shopFragment;        // Fragment che genera i negozi
+    private SignalFragment signalFragment;    // Fragment che genera le segnalazioni
+
+    // variabili utili per la gestione della vicinanza degli utenti
+    private MessageListener mMessageListener;
+    private Message mMessage;
+    private Activity context=this;
+    BluetoothAdapter myAdapter= BluetoothAdapter.getDefaultAdapter();
+    private String myName= myAdapter.getName();
+    private ArrayList<String> devices= new ArrayList<>();
 
     private int capacity;
 
@@ -93,6 +109,28 @@ public class TabsActivity extends AppCompatActivity{
         viewPagerAdapter.addFragment(signalFragment, "SEGNALAZIONI");
         viewPager.setAdapter(viewPagerAdapter);
 
+        mMessageListener= new MessageListener() {
+            @Override
+            public void onFound(Message message) {
+                if(!devices.contains(message.toString())) {
+                    Log.d("NEARBY-CONN", "Found message: " + new String(message.getContent()));
+                    devices.add(message.toString());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                    builder.setTitle("");
+                    builder.setMessage("Stai attento hai dispositivi nelle vicinanze");
+                    builder.setCancelable(true);
+                    builder.show();
+                }
+            }
+
+            @Override
+            public void onLost(Message message) {
+                Log.d("NEARBY-CONN", "Lost sight of message: " + new String(message.getContent()));
+            }
+        };
+        mMessage= new Message(myName.getBytes());
+
         showToast("Accesso eseguito");
     }
 
@@ -106,6 +144,21 @@ public class TabsActivity extends AppCompatActivity{
     public void onPause() {
         super.onPause();
         handler.removeCallbacks(runnable);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Nearby.
+        getMessagesClient(this).publish(mMessage);
+        getMessagesClient(this).subscribe(mMessageListener);
+    }
+
+    @Override
+    public void onStop() {
+        getMessagesClient(this).unpublish(mMessage);
+        getMessagesClient(this).unsubscribe(mMessageListener);
+        super.onStop();
     }
 
     // funzione che si occupa di gestire la gesture di chiusura con il tasto fisico

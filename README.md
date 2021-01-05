@@ -7,10 +7,10 @@ Feature applicazione:\
 -Accesso ad un negozio scaglionato in base ad una capienza massima e gestione di coda relativa\
 -Inserimento segnalazioni\
 -Annullamento delle code relative\
--Segnalazione di vicinanza ad altri dispositivi per mantenere il distanziamento sociale\
+-Segnalazione di vicinanza ad altri dispositivi per mantenere il distanziamento sociale
 
 L'activity che contiene le tabs dei negozi cambia dinamicamente in base alla lista di nomi del centro commerciale nel database real time.\
-Controlla in entrambe le mappe la presenza dei sensori richiesti, quali internet, GPS e bluetooth, altrimenti killa con un bruteforce l'applicazione\
+Controlla in entrambe le mappe la presenza dei sensori richiesti, quali internet, GPS e bluetooth, altrimenti killa con un bruteforce l'applicazione
  
 # MANCA:
 -Gestione della coda di utenti da inserire nel database e utilizzare in locale come "coda" effettiva

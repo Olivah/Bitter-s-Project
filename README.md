@@ -14,5 +14,5 @@ Controlla in entrambe le mappe la presenza dei sensori richiesti, quali internet
  
 # MANCA:
 -Gestione della coda di utenti da inserire nel database e utilizzare in locale come "coda" effettiva
-(controllo che l'user sia il primo della coda, altrimenti aspetta, politica FIFO)
+(controllo che l'user sia il primo della coda, altrimenti aspetta, politica FIFO)\
 -BUG CHE SE ANNULLO LA CODA AD UN NEGOZIO MI INSERISCE COMUNQUE ALL'INTERNO, SOLO VISIVAMENTE NELL'ACTIVITY

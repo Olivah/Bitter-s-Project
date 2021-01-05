@@ -38,6 +38,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.google.android.gms.nearby.Nearby.getMessagesClient;
 import static java.lang.Integer.parseInt;
@@ -54,11 +56,9 @@ public class TabsActivity extends AppCompatActivity{
     private MessageListener mMessageListener;
     private Message mMessage;
     private Activity context=this;
-    BluetoothAdapter myAdapter= BluetoothAdapter.getDefaultAdapter();
+    private BluetoothAdapter myAdapter= BluetoothAdapter.getDefaultAdapter();
     private String myName= myAdapter.getName();
     private ArrayList<String> devices= new ArrayList<>();
-
-    private int capacity;
 
     // thread che controlla se i sensori sono attivi
     private Handler handler = new Handler();
@@ -70,28 +70,13 @@ public class TabsActivity extends AppCompatActivity{
         }
     };
 
+    private Timer timer= new Timer();
+
     // creazione della tab activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
-
-        Query currcap= MainActivity.info.getInfo("Mall_List/Nave_de_Vero/Currcap");
-        currcap.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
-                    capacity=parseInt(dataSnapshot.getValue().toString());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        MainActivity.info.pushInfo("Mall_List/Nave_de_Vero/Inside_User/List", MainActivity.info.getUser().getCode().toString(), MainActivity.info.getUser().getCode().toString());
 
         viewPager=findViewById(R.id.view_pager);
         tabLayout=findViewById(R.id.tabs);
@@ -130,8 +115,6 @@ public class TabsActivity extends AppCompatActivity{
             }
         };
         mMessage= new Message(myName.getBytes());
-
-        showToast("Accesso eseguito");
     }
 
     @Override
@@ -161,6 +144,13 @@ public class TabsActivity extends AppCompatActivity{
         super.onStop();
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        timer.cancel();
+        MainActivity.info.dequeueMall("Nave_de_Vero");
+    }
+
     // funzione che si occupa di gestire la gesture di chiusura con il tasto fisico
     @Override
     public void onBackPressed() {
@@ -182,15 +172,6 @@ public class TabsActivity extends AppCompatActivity{
             }
         });
         builder.show();
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        capacity--;
-        MainActivity.info.pushInfo("Mall_List/Nave_de_Vero", "Currcap", ""+capacity);
-        MainActivity.info.removeInfo("Mall_List/Nave_de_Vero/Inside_User/List", MainActivity.info.getUser().getCode().toString());
-        showToast("Arrivederci, a presto!");
     }
 
     // Classe che si occupa dell'adattazione delle pagine
@@ -280,5 +261,4 @@ public class TabsActivity extends AppCompatActivity{
         }
         return false;
     }
-
 }

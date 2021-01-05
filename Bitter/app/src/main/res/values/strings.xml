@@ -5,7 +5,7 @@
     <string name="signalText">Descrivi il problema</string>
     <string name="placeholder">Inserisci qua la descrizione</string>
     <string name="send">Invia</string>
-    <string name="queue">Sei il numero</string>
+    <string name="queue">Sei stato posizionato in una coda</string>
     <string name="tot_people">di ? persone in coda</string>
     <string name="userCode">USER_CODE: ?</string>
     <string name="exit">Esci</string>

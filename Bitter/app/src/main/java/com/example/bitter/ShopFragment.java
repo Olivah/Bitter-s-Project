@@ -2,6 +2,7 @@ package com.example.bitter;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,6 +27,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static java.lang.Double.parseDouble;
 
@@ -35,6 +39,8 @@ public class ShopFragment extends Fragment {
     public static boolean isInside;
     private View disabledElement;
     private Button exitButton;
+    private String shopName;
+    private Timer exit= new Timer();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,7 +53,6 @@ public class ShopFragment extends Fragment {
         View v= inflater.inflate(R.layout.fragment_shop, container, false);
 
         listView= (ListView) v.findViewById(R.id.ListView);
-
 
         // mi prendo la lista di negozi dal database
         final ArrayList<String> list= new ArrayList<>();
@@ -76,9 +81,17 @@ public class ShopFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(!isInside) {
-                    disabledElement=view;
+                    shopName = list.get(position);
+
+                    Intent i= new Intent(context, QueueActivity.class);
+                    i.putExtra("Mall", "Nave_de_Vero");
+                    i.putExtra("Shop", shopName);
+                    startActivity(i);
+
+                    onPause();
+
+                    disabledElement = view;
                     view.setEnabled(false);
-                    showToast("Sei entrato in: "+list.get(position));
                     isInside = true;
                     exitButton.setVisibility(View.VISIBLE);
                 }else{
@@ -96,10 +109,16 @@ public class ShopFragment extends Fragment {
                 builder.setMessage("Sei sicuro di voler uscire? ");
                 builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                    exit.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            MainActivity.info.dequeueShop("Nave_de_Vero", shopName);
                             disabledElement.setEnabled(true);
                             isInside=false;
                             exitButton.setVisibility(View.INVISIBLE);
-                            showToast("Sei uscito dal negozio");
+                        }
+                    }, 100);
+                    showToast("Sei uscito dal negozio");
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -114,13 +133,19 @@ public class ShopFragment extends Fragment {
         return v;
     }
 
-    private void showToast (String text){
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        exit.cancel();
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         context= getActivity();
+    }
+
+    private void showToast (String text){
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
 }

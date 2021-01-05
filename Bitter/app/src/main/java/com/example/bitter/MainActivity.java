@@ -228,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     // funzione che si occupa di far entrare un utente nel centro commerciale
     public void enterHandler(View v){
         Intent i= new Intent(this, QueueActivity.class);
+        i.putExtra("Mall", "Nave_de_Vero");
         startActivity(i);
     }
 

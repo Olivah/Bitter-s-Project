@@ -1,6 +1,5 @@
 package com.example.bitter;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,66 +7,66 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static java.lang.Integer.parseInt;
-
 public class QueueActivity extends AppCompatActivity {
 
-    private Timer timer;
-    private int capacity;
+    private Timer timer= new Timer();
+    private String mall;
+    private String shop;
+    private boolean isShop=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_queue);
 
-        Query currcap= MainActivity.info.getInfo("Mall_List/Nave_de_Vero/Currcap");
-        currcap.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
-                    capacity=parseInt(dataSnapshot.getValue().toString());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        Intent i=getIntent();
+        mall=i.getStringExtra("Mall");
+        if (i.hasExtra("Shop")) {
+            shop = i.getStringExtra("Shop");
+            isShop=true;
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        ((TextView)findViewById(R.id.user_number)).setText(""+capacity);
-        timer= new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(QueueActivity.this, TabsActivity.class);
-                capacity++;
-                MainActivity.info.pushInfo("Mall_List/Nave_de_Vero", "Currcap", ""+capacity);
-                intent.putExtra("capacity", capacity);
-                startActivity(intent);
-                finish();
-            }
-        }, 3000);
+        if(!isShop) {
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (MainActivity.info.enqueueMall(mall)) {
+                        Intent intent = new Intent(QueueActivity.this, TabsActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }
+            }, 200);
+        }else if(isShop){
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (MainActivity.info.enqueueShop(mall, shop)) {
+                        Intent intent = new Intent(QueueActivity.this, TabsActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(intent);
+                        finish();
+                    }
+                }
+            }, 200);
+        }
+        showToast("Accesso eseguito");
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         timer.cancel();
+        timer.purge();
+        super.onDestroy();
     }
 
     public void exitHandler(View v){
@@ -90,5 +89,9 @@ public class QueueActivity extends AppCompatActivity {
             }
         });
         builder.show();
+    }
+
+    private void showToast (String text){
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 }

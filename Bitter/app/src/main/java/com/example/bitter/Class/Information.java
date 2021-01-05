@@ -1,5 +1,7 @@
 package com.example.bitter.Class;
 
+import android.os.SystemClock;
+
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
@@ -18,20 +20,22 @@ public class Information {
     private User user;
     private DatabaseReference reference;
 
-    private ArrayList<User> queue;
-    private int maxcap;
-    private int currcap;
+    private ArrayList<String> shops= new ArrayList<>();
+    private int maxcapMall;
+    private int currcapMall;
+    private int maxcapShop;
+    private int currcapShop;
 
     public Information(){
 
         user= new User();
 
-        final Query current= getInfo("Mall_List/Nave_de_Vero/Currcap");
+        Query current= getInfo("Mall_List/Nave_de_Vero/Currcap");
         current.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
-                    currcap=parseInt(dataSnapshot.getValue().toString());
+                    currcapMall=parseInt(dataSnapshot.getValue().toString());
                 }
             }
 
@@ -41,12 +45,30 @@ public class Information {
             }
         });
 
-        final Query max= getInfo("Mall_List/Nave_de_Vero/Maxcap");
+        Query max= getInfo("Mall_List/Nave_de_Vero/Maxcap");
         max.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
-                    maxcap=parseInt(dataSnapshot.getValue().toString());
+                    maxcapMall=parseInt(dataSnapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        Query shopList= getInfo("Mall_List/Nave_de_Vero/Shop_List_Name");
+        shopList.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    shops.clear();
+                    for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                        shops.add(snapshot.getValue().toString());
+                    }
                 }
             }
 
@@ -80,14 +102,73 @@ public class Information {
     }
 
     //mette un utente nella relativa coda
-    public void enqueue() {
-        if(currcap<maxcap){
+    public boolean enqueueMall(String mall) {
+        while(currcapMall >= maxcapMall) {SystemClock.sleep(100);}
 
-        }
+        pushInfo("Mall_List/"+mall+"/Inside_User/List", user.getCode().toString(), user.getCode().toString());
+        currcapMall++;
+        pushInfo("Mall_List/Nave_de_Vero", "Currcap", ""+currcapMall);
+        return true;
     }
 
     //elimina la prima persona dalla coda cioè quella in posizione 0 e la restituisce
-    public void dequeue() {
+    public boolean dequeueMall(String mall) {
+        removeInfo("Mall_List/"+mall+"/Inside_User/List", user.getCode().toString());
+        currcapMall--;
+        pushInfo("Mall_List/"+mall+"/", "Currcap", ""+currcapMall);
+        return true;
+    }
 
+    //mette un utente nella relativa coda
+    public boolean enqueueShop(String mall, String shop) {
+        Query current= getInfo("Mall_List/"+mall+"/Shop_List/"+shop+"/Currcap");
+        current.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    currcapShop=parseInt(dataSnapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        Query max= getInfo("Mall_List/"+mall+"/Shop_List/"+shop+"/Maxcap");
+        max.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    maxcapShop=parseInt(dataSnapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        while(currcapShop >= maxcapShop) {SystemClock.sleep(100);}
+
+        setUser(mall, shop);
+
+        return true;
+    }
+
+    public void setUser(String mall, String shop){
+        pushInfo("Mall_List/"+mall+"/Shop_List/"+shop+"/Inside_User/List", user.getCode().toString(), user.getCode().toString());
+        currcapShop++;
+        pushInfo("Mall_List/"+mall+"/Shop_List/"+shop, "Currcap", ""+currcapShop);
+    }
+
+    //elimina la prima persona dalla coda cioè quella in posizione 0 e la restituisce
+    public boolean dequeueShop(String mall, String shop) {
+        removeInfo("Mall_List/"+mall+"/Shop_List/"+shop+"/Inside_User/List", user.getCode().toString());
+        currcapShop--;
+        pushInfo("Mall_List/"+mall+"/Shop_List/"+shop, "Currcap", ""+currcapShop);
+        return true;
     }
 }

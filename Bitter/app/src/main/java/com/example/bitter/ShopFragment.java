@@ -25,8 +25,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ShopFragment extends Fragment {
 
@@ -36,7 +34,6 @@ public class ShopFragment extends Fragment {
     private View disabledElement;
     private Button exitButton;
     private String shopName;
-    private Timer exit= new Timer();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,15 +97,10 @@ public class ShopFragment extends Fragment {
                 builder.setMessage("Sei sicuro di voler uscire? ");
                 builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                    exit.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            MainActivity.info.dequeueShop("Nave_de_Vero", shopName);
-                            disabledElement.setEnabled(true);
-                            isInside=false;
-                            exitButton.setVisibility(View.INVISIBLE);
-                        }
-                    }, 100);
+                        MainActivity.info.dequeueShop("Nave_de_Vero", shopName);
+                        disabledElement.setEnabled(true);
+                        isInside=false;
+                        exitButton.setVisibility(View.INVISIBLE);
                     showToast("Sei uscito dal negozio");
                     }
                 });
@@ -127,9 +119,6 @@ public class ShopFragment extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        exit.cancel();
-        exit.purge();
-        exit=null;
     }
 
     @Override

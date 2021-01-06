@@ -1,6 +1,6 @@
 # Bitter-s-Project
-Versione con totale utilizzo di firebase database al link: https://console.firebase.google.com/u/0/project/bitter-298116/database/bitter-298116-default-rtdb/data.\
-Utilizza coordinate nel database per settare marker sulla nave de vero e bound sulla mappa intorno all'italia come swipe singolo ai bordi dello schermo.\
+Versione con totale utilizzo di firebase database al link: https://console.firebase.google.com/u/0/project/bitter-298116/database/bitter-298116-default-rtdb/data. 
+Utilizza coordinate nel database per settare marker sulla nave de vero e bound sulla mappa intorno all'italia come swipe singolo ai bordi dello schermo.
 Può presentarsi un piccolo bug che all'avvio dell'applicazione ti metta nelle coordinate 0,0 all'equatore causa mancanza di internet o primo avvio.\
 Feature applicazione:\
 -Accesso ad un centro commerciale scaglionato in base ad una capienza massima e gestione coda relativa\

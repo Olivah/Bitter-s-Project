@@ -36,7 +36,6 @@ import androidx.core.content.ContextCompat;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.view.View;
-import android.widget.TextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -68,8 +67,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     };
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // prendo il codice univoco appena generato per l'utente e lo inserisco nella lista degli utenti attivi
         info.pushInfo("User_List",info.getUser().getCode().toString(),info.getUser().getCode().toString());
-        ((TextView)findViewById(R.id.user_code)).setText(((TextView)findViewById(R.id.user_code)).getText().toString().replace("?", info.getUser().getCode().toString()));
 
         // imposto le coordinate da visualizzare nella mappa
         settingCoordinates();

@@ -1,7 +1,6 @@
 package com.example.bitter.Class;
 
 import android.os.SystemClock;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 

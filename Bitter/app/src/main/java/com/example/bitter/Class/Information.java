@@ -1,6 +1,7 @@
 package com.example.bitter.Class;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -20,7 +21,9 @@ public class Information {
     private User user;
     private DatabaseReference reference;
 
-    private ArrayList<String> shops= new ArrayList<>();
+    private ArrayList<String> queueMall= new ArrayList<>();
+    private ArrayList<String> queueShop= new ArrayList<>();
+    private int size;
     private int maxcapMall;
     private int currcapMall;
     private int maxcapShop;
@@ -60,14 +63,16 @@ public class Information {
             }
         });
 
-        Query shopList= getInfo("Mall_List/Nave_de_Vero/Shop_List_Name");
-        shopList.addValueEventListener(new ValueEventListener() {
+        Query userList= getInfo("Mall_List/Nave_de_Vero/Queue_User");
+        userList.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
-                    shops.clear();
+                    queueMall.clear();
+                    size=0;
                     for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                        shops.add(snapshot.getValue().toString());
+                        queueMall.add(size, snapshot.getValue().toString());
+                        size++;
                     }
                 }
             }
@@ -102,25 +107,41 @@ public class Information {
     }
 
     //mette un utente nella relativa coda
-    public boolean enqueueMall(String mall) {
-        while(currcapMall >= maxcapMall) {SystemClock.sleep(100);}
+    public boolean enqueueMall(String mall, Thread myself) {
+        // metto l'utente in coda
+        pushInfo("Mall_List/"+mall+"/Queue_User/List",user.getCode().toString(), user.getCode().toString());
 
-        pushInfo("Mall_List/"+mall+"/Inside_User/List", user.getCode().toString(), user.getCode().toString());
+        SystemClock.sleep(1000);
+
+        while(currcapMall >= maxcapMall && queueMall.get(0)!=user.getCode().toString()) {SystemClock.sleep(100);}
+
+        // tolgo l'utente dalla coda
+        removeInfo("Mall_List/"+mall+"/Queue_User/List/", user.getCode().toString());
+
+        // se avevo interrotto il thread annullo l'inserimento nel centro commerciale
+        if(myself.isInterrupted()){
+            return false;
+        }
+
         currcapMall++;
         pushInfo("Mall_List/Nave_de_Vero", "Currcap", ""+currcapMall);
+        pushInfo("Mall_List/"+mall+"/Inside_User/List", user.getCode().toString(), user.getCode().toString());
         return true;
     }
 
     //elimina la prima persona dalla coda cioè quella in posizione 0 e la restituisce
     public boolean dequeueMall(String mall) {
-        removeInfo("Mall_List/"+mall+"/Inside_User/List", user.getCode().toString());
         currcapMall--;
         pushInfo("Mall_List/"+mall+"/", "Currcap", ""+currcapMall);
+        removeInfo("Mall_List/"+mall+"/Inside_User/List", user.getCode().toString());
         return true;
     }
 
     //mette un utente nella relativa coda
-    public boolean enqueueShop(String mall, String shop) {
+    public boolean enqueueShop(String mall, String shop, Thread myself) {
+        // metto l'utente in coda
+        pushInfo("Mall_List/"+mall+"/Shop_List/"+shop+"/Queue_User/List",user.getCode().toString(), user.getCode().toString());
+
         Query current= getInfo("Mall_List/"+mall+"/Shop_List/"+shop+"/Currcap");
         current.addValueEventListener(new ValueEventListener() {
             @Override
@@ -151,24 +172,50 @@ public class Information {
             }
         });
 
-        while(currcapShop >= maxcapShop) {SystemClock.sleep(100);}
+        Query userList= getInfo("Mall_List/"+mall+"/Shop_List/"+shop+"/Queue_User/List");
+        userList.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    queueShop.clear();
+                    size=0;
+                    for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                        queueShop.add(size, snapshot.getValue().toString());
+                        size++;
+                    }
+                }
+            }
 
-        setUser(mall, shop);
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        SystemClock.sleep(1000);
+
+        while(currcapShop >= maxcapShop && queueShop.get(0)!=user.getCode().toString()){SystemClock.sleep(100);}
+
+        // tolgo l'utente dalla coda
+        removeInfo("Mall_List/"+mall+"/Shop_List/"+shop+"/Queue_User/List", user.getCode().toString());
+
+        // se avevo interrotto il thread annullo l'inserimento nel centro commerciale
+        if(myself.isInterrupted()){
+            return false;
+        }
+
+        currcapShop++;
+        pushInfo("Mall_List/"+mall+"/Shop_List/"+shop, "Currcap", ""+currcapShop);
+        pushInfo("Mall_List/"+mall+"/Shop_List/"+shop+"/Inside_User/List", user.getCode().toString(), user.getCode().toString());
 
         return true;
     }
 
-    public void setUser(String mall, String shop){
-        pushInfo("Mall_List/"+mall+"/Shop_List/"+shop+"/Inside_User/List", user.getCode().toString(), user.getCode().toString());
-        currcapShop++;
-        pushInfo("Mall_List/"+mall+"/Shop_List/"+shop, "Currcap", ""+currcapShop);
-    }
-
     //elimina la prima persona dalla coda cioè quella in posizione 0 e la restituisce
     public boolean dequeueShop(String mall, String shop) {
-        removeInfo("Mall_List/"+mall+"/Shop_List/"+shop+"/Inside_User/List", user.getCode().toString());
         currcapShop--;
         pushInfo("Mall_List/"+mall+"/Shop_List/"+shop, "Currcap", ""+currcapShop);
+        removeInfo("Mall_List/"+mall+"/Shop_List/"+shop+"/Inside_User/List", user.getCode().toString());
         return true;
     }
 }

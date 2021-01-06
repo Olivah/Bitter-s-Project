@@ -52,7 +52,7 @@ public class ShopFragment extends Fragment {
 
         View v= inflater.inflate(R.layout.fragment_shop, container, false);
 
-        listView= (ListView) v.findViewById(R.id.ListView);
+        listView= v.findViewById(R.id.ListView);
 
         // mi prendo la lista di negozi dal database
         final ArrayList<String> list= new ArrayList<>();
@@ -78,29 +78,24 @@ public class ShopFragment extends Fragment {
         });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(!isInside) {
                     shopName = list.get(position);
+                    disabledElement = view;
 
                     Intent i= new Intent(context, QueueActivity.class);
                     i.putExtra("Mall", "Nave_de_Vero");
                     i.putExtra("Shop", shopName);
-                    startActivity(i);
-
-                    onPause();
-
-                    disabledElement = view;
-                    view.setEnabled(false);
-                    isInside = true;
-                    exitButton.setVisibility(View.VISIBLE);
+                    startActivityForResult(i,1);
                 }else{
                     showToast("Sei già dentro un negozio");
                 }
             }
         });
 
-        exitButton= ((Button) v.findViewById(R.id.exitButton));
+        exitButton= v.findViewById(R.id.exitButton);
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,12 +132,22 @@ public class ShopFragment extends Fragment {
     public void onDestroy(){
         super.onDestroy();
         exit.cancel();
+        exit.purge();
+        exit=null;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         context= getActivity();
+    }
+
+
+
+    public void enterSuccess(){
+        disabledElement.setEnabled(false);
+        exitButton.setVisibility(View.VISIBLE);
+        isInside = true;
     }
 
     private void showToast (String text){

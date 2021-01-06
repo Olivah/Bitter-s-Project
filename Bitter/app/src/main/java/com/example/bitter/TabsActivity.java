@@ -115,6 +115,7 @@ public class TabsActivity extends AppCompatActivity{
             }
         };
         mMessage= new Message(myName.getBytes());
+        showToast("Accesso eseguito");
     }
 
     @Override
@@ -148,7 +149,10 @@ public class TabsActivity extends AppCompatActivity{
     public void onDestroy(){
         super.onDestroy();
         timer.cancel();
+        timer.purge();
+        timer=null;
         MainActivity.info.dequeueMall("Nave_de_Vero");
+        showToast("Arrivederci, a presto!");
     }
 
     // funzione che si occupa di gestire la gesture di chiusura con il tasto fisico
@@ -260,5 +264,12 @@ public class TabsActivity extends AppCompatActivity{
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK)
+            shopFragment.enterSuccess();
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

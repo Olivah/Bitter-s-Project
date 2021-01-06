@@ -3,6 +3,7 @@ package com.example.bitter;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,10 +15,29 @@ import java.util.TimerTask;
 
 public class QueueActivity extends AppCompatActivity {
 
-    private Timer timer= new Timer();
     private String mall;
     private String shop;
     private boolean isShop=false;
+    private Thread threadMall= new Thread(new Runnable() {
+        @Override
+        public void run() {
+            if (MainActivity.info.enqueueMall(mall, threadMall)) {
+                Intent intent = new Intent(QueueActivity.this, TabsActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }
+    });
+    private Thread threadShop= new Thread(new Runnable() {
+        @Override
+        public void run() {
+            if (MainActivity.info.enqueueShop(mall, shop, threadShop)) {
+                Intent resultIntent = new Intent();
+                setResult(Activity.RESULT_OK, resultIntent);
+                finish();
+            }
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,37 +56,20 @@ public class QueueActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         if(!isShop) {
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    if (MainActivity.info.enqueueMall(mall)) {
-                        Intent intent = new Intent(QueueActivity.this, TabsActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                }
-            }, 200);
+            threadMall.start();
         }else if(isShop){
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    if (MainActivity.info.enqueueShop(mall, shop)) {
-                        Intent intent = new Intent(QueueActivity.this, TabsActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(intent);
-                        finish();
-                    }
-                }
-            }, 200);
+            threadShop.start();
         }
-        showToast("Accesso eseguito");
     }
 
     @Override
     public void onDestroy() {
-        timer.cancel();
-        timer.purge();
         super.onDestroy();
+        if(!isShop) {
+            threadMall.interrupt();
+        }else if(isShop){
+            threadShop.interrupt();
+        }
     }
 
     public void exitHandler(View v){
@@ -89,9 +92,5 @@ public class QueueActivity extends AppCompatActivity {
             }
         });
         builder.show();
-    }
-
-    private void showToast (String text){
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 }

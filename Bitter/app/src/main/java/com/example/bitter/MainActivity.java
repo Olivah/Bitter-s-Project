@@ -52,20 +52,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static LatLngBounds ITALY_BOUNDS;
     public static LatLngBounds MALL_BOUNDS;
     public static Information info;
-    public static Timer timer;
     public static BluetoothAdapter mAdapter;
     private static Coordinates mall;
     private GoogleMap mGoogleMap;
 
+    private Timer timer=new Timer();
+
     // thread che controlla se i sensori sono attivi
     private Handler handler = new Handler();
-    private Runnable runnable = new Runnable() {
+    private Runnable sensor = new Runnable() {
         @Override
         public void run() {
             isPermissionOk();
             handler.postDelayed(this, 8500);
         }
     };
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,19 +98,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onDestroy() {
         super.onDestroy();
+        timer.cancel();
+        timer.purge();
+        timer=null;
         info.removeInfo("User_List", info.getUser().getCode().toString());
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        handler.postDelayed(runnable, 500);
+        handler.postDelayed(sensor, 500);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        handler.removeCallbacks(runnable);
+        handler.removeCallbacks(sensor);
     }
 
     // funzione che si occupa di gestire la gesture di chiusura con il tasto fisico
@@ -294,9 +300,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     // funzione che si occupa di controllare se il telefono ha il bluetooth attivo
     private boolean isBluetoothEnabled(){
         mAdapter= BluetoothAdapter.getDefaultAdapter();
-        if(mAdapter.isEnabled()) {
-            return true;
-        }
-        return false;
+        return mAdapter.isEnabled();
     }
 }
